@@ -38,6 +38,7 @@ public class AtlasAuthenticationProvider extends AtlasAbstractAuthenticationProv
     private boolean fileAuthenticationMethodEnabled = true;
     private boolean pamAuthenticationEnabled = false;
     private boolean keycloakAuthenticationEnabled = false;
+    private boolean jwtAuthenticationMethodEnabled = false;
 
     private String ldapType = "NONE";
     public static final String FILE_AUTH_METHOD = "atlas.authentication.method.file";
@@ -45,7 +46,7 @@ public class AtlasAuthenticationProvider extends AtlasAbstractAuthenticationProv
     public static final String LDAP_TYPE = "atlas.authentication.method.ldap.type";
     public static final String PAM_AUTH_METHOD = "atlas.authentication.method.pam";
     public static final String KEYCLOAK_AUTH_METHOD = "atlas.authentication.method.keycloak";
-
+    public static final String JWT_AUTH_METHOD = "atlas.authentication.method.jwt";
 
 
     private boolean ssoEnabled = false;
@@ -60,17 +61,21 @@ public class AtlasAuthenticationProvider extends AtlasAbstractAuthenticationProv
 
     final AtlasKeycloakAuthenticationProvider atlasKeycloakAuthenticationProvider;
 
+    final AtlasJWTAuthenticationProvider jwtAuthenticationProvider;
+
     @Inject
     public AtlasAuthenticationProvider(AtlasLdapAuthenticationProvider ldapAuthenticationProvider,
                                        AtlasFileAuthenticationProvider fileAuthenticationProvider,
                                        AtlasADAuthenticationProvider adAuthenticationProvider,
                                        AtlasPamAuthenticationProvider pamAuthenticationProvider,
-                                       AtlasKeycloakAuthenticationProvider atlasKeycloakAuthenticationProvider) {
+                                       AtlasKeycloakAuthenticationProvider atlasKeycloakAuthenticationProvider,
+                                       AtlasJWTAuthenticationProvider jwtAuthenticationProvider) {
         this.ldapAuthenticationProvider = ldapAuthenticationProvider;
         this.fileAuthenticationProvider = fileAuthenticationProvider;
         this.adAuthenticationProvider = adAuthenticationProvider;
         this.pamAuthenticationProvider = pamAuthenticationProvider;
         this.atlasKeycloakAuthenticationProvider = atlasKeycloakAuthenticationProvider;
+        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
     }
 
     @PostConstruct
@@ -83,6 +88,8 @@ public class AtlasAuthenticationProvider extends AtlasAbstractAuthenticationProv
             this.pamAuthenticationEnabled = configuration.getBoolean(PAM_AUTH_METHOD, false);
 
             this.keycloakAuthenticationEnabled = configuration.getBoolean(KEYCLOAK_AUTH_METHOD, false);
+
+            this.jwtAuthenticationMethodEnabled = configuration.getBoolean(JWT_AUTH_METHOD, false);
 
             boolean ldapAuthenticationEnabled = configuration.getBoolean(LDAP_AUTH_METHOD, false);
 
@@ -133,6 +140,12 @@ public class AtlasAuthenticationProvider extends AtlasAbstractAuthenticationProv
                 } catch (Exception ex) {
                     LOG.error("Error while Keycloak authentication", ex);
                 }
+            } else if (jwtAuthenticationMethodEnabled) {
+                try {
+                    authentication = jwtAuthenticationProvider.authenticate(authentication);
+                } catch (Exception ex) {
+                    LOG.error("Error while JWT authentication", ex);
+                }
             }
         }
 
@@ -162,6 +175,8 @@ public class AtlasAuthenticationProvider extends AtlasAbstractAuthenticationProv
             return adAuthenticationProvider.supports(authentication);
         } else if (keycloakAuthenticationEnabled) {
             return atlasKeycloakAuthenticationProvider.supports(authentication);
+        } else if (jwtAuthenticationMethodEnabled) {
+            return jwtAuthenticationProvider.supports(authentication);
         } else {
             return super.supports(authentication);
         }
