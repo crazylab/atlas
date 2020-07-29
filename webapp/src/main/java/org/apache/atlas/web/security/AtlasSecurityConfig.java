@@ -89,6 +89,7 @@ public class AtlasSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AtlasAuthenticationFilter atlasAuthenticationFilter;
     private final AtlasCSRFPreventionFilter csrfPreventionFilter;
     private final AtlasAuthenticationEntryPoint atlasAuthenticationEntryPoint;
+    private final AtlasAADSSOAuthenticationFilter aadAuthenticationFilter;
 
     // Our own Atlas filters need to be registered as well
     private final Configuration configuration;
@@ -105,7 +106,8 @@ public class AtlasSecurityConfig extends WebSecurityConfigurerAdapter {
     private final boolean keycloakEnabled;
 
     @Inject
-    public AtlasSecurityConfig(AtlasKnoxSSOAuthenticationFilter ssoAuthenticationFilter,
+    public AtlasSecurityConfig(AtlasAADSSOAuthenticationFilter aadAuthenticationFilter,
+                               AtlasKnoxSSOAuthenticationFilter ssoAuthenticationFilter,
                                AtlasCSRFPreventionFilter atlasCSRFPreventionFilter,
                                AtlasAuthenticationFilter atlasAuthenticationFilter,
                                AtlasAuthenticationProvider authenticationProvider,
@@ -115,6 +117,7 @@ public class AtlasSecurityConfig extends WebSecurityConfigurerAdapter {
                                Configuration configuration,
                                StaleTransactionCleanupFilter staleTransactionCleanupFilter,
                                ActiveServerFilter activeServerFilter) {
+        this.aadAuthenticationFilter = aadAuthenticationFilter;
         this.ssoAuthenticationFilter = ssoAuthenticationFilter;
         this.csrfPreventionFilter = atlasCSRFPreventionFilter;
         this.atlasAuthenticationFilter = atlasAuthenticationFilter;
@@ -230,6 +233,7 @@ public class AtlasSecurityConfig extends WebSecurityConfigurerAdapter {
         }
         httpSecurity
                 .addFilterAfter(staleTransactionCleanupFilter, BasicAuthenticationFilter.class)
+                .addFilterBefore(aadAuthenticationFilter, BasicAuthenticationFilter.class)
                 .addFilterBefore(ssoAuthenticationFilter, BasicAuthenticationFilter.class)
                 .addFilterAfter(atlasAuthenticationFilter, SecurityContextHolderAwareRequestFilter.class)
                 .addFilterAfter(csrfPreventionFilter, AtlasAuthenticationFilter.class);
