@@ -651,7 +651,7 @@
         <node-for-v2.version>v12.16.0</node-for-v2.version>
         <npm-for-v2.version>6.13.7</npm-for-v2.version>
         <slf4j.version>1.7.21</slf4j.version>
-        <jetty.version>9.3.14.v20161028</jetty.version>
+        <jetty.version>9.3.28.v20191105</jetty.version>
         <jetty.jsp.version>9.2.12.v20150709</jetty.jsp.version>
         <jersey.version>1.19</jersey.version>
         <jsr.version>1.1</jsr.version>
@@ -660,7 +660,7 @@
         <tinkerpop.version>3.4.6</tinkerpop.version>
         <lucene-solr.version>7.3.0</lucene-solr.version>
 
-        <hadoop.version>3.1.1</hadoop.version>
+        <hadoop.version>3.3.0</hadoop.version>
         <hbase.version>2.0.2</hbase.version>
         <solr.version>7.5.0</solr.version>
         <hive.version>3.1.0</hive.version>
@@ -690,8 +690,8 @@
 
         <!-- Needed for hooks -->
         <aopalliance.version>1.0</aopalliance.version>
-        <jackson.version>2.9.9</jackson.version>
-        <jackson.databind.version>2.10.0</jackson.databind.version>
+        <jackson.version>2.10.3</jackson.version>
+        <jackson.databind.version>2.10.3</jackson.databind.version>
 
         <!-- Apache commons -->
         <commons-conf.version>1.10</commons-conf.version>
@@ -1654,6 +1654,37 @@
                 <version>${zkclient.version}</version>
             </dependency>
 
+            <!--            CVE FIXES           -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-io</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-http</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-util</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-xml</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-security</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
